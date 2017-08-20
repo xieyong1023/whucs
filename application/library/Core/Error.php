@@ -2,7 +2,7 @@
 /**
  * 错误类
  *
- * @author: xieyong <xieyong1023@qq.com>
+ * @author: xieyong <qxieyongp@163.com>
  * @date: 2017/8/7
  * @time: 15:31
  */
@@ -13,6 +13,7 @@ class Error
 {
     public static function show_404()
     {
-        header('HTTP/1.1 404 Not Found');
+        \Yaf_Dispatcher::getInstance()->disableView();
+
     }
 }

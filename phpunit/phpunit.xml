@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="./autoload.php" verbose="true">
+    <logging>
+        <log type="coverage-html" target="./report" charset="UTF-8"/>
+    </logging>
+	
+	<testsuites>
+		<testsuite name="ExceptionTest">
+			<file>test/ExceptionTest.php</file>
+		</testsuite>
+	</testsuites>
+	    
+	<filter>
+       <whitelist processUncoveredFilesFromWhitelist="false">
+			<file>../application/library/Core/Exception.php</file>
+       </whitelist>
+    </filter>
+</phpunit>

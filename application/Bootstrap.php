@@ -5,18 +5,13 @@
  * 这些方法, 都接受一个参数:Yaf_Dispatcher $dispatcher
  * 调用的次序, 和申明的次序相同
  *
- * @author: xieyong <xieyong1023@qq.com>
+ * @author: xieyong <qxieyongp@163.com>
  * @date: 2017/8/2
  * @time: 14:12
  * @see http://www.laruence.com/manual/yaf.class.bootstrap.html
  */
 
 class Bootstrap extends Yaf_Bootstrap_Abstract{
-
-    public function _init_test()
-    {
-
-    }
 
     /**
      * 是否输出错误
@@ -32,12 +27,29 @@ class Bootstrap extends Yaf_Bootstrap_Abstract{
         }
     }
 
-
-    public function _init_config()
+    /**
+     * 初试化配置文件路径
+     * @author: xieyong <qxieyongp@163.com>
+     */
+    public function _init_config_path()
     {
-
+        \Library\Config\ConfigManager::setConfigFilePath(CONFIG_PATH);
     }
 
+    /**
+     * 设置异常语言
+     * @author: xieyong <qxieyongp@163.com>
+     */
+    public function _init_exception_language()
+    {
+        $config = Yaf_Application::app()->getConfig();
+        \Library\Core\Exception::setLanguage($config->application->language);
+    }
+
+    /**
+     * 注册插件
+     * @author: xieyong <qxieyongp@163.com>
+     */
     public function _init_plugin()
     {
 
@@ -51,5 +63,39 @@ class Bootstrap extends Yaf_Bootstrap_Abstract{
     {
         $router = $dispatcher->getRouter();
         $router->addConfig(new Yaf_Config_Ini(CONFIG_PATH . '/router.ini'));
+    }
+
+    /**
+     * 注册日志服务
+     * @author: xieyong <qxieyongp@163.com>
+     */
+    public function _init_logger()
+    {
+        $log_names = [
+            'database'          // 数据库日志
+        ];
+
+        $di = \Library\DI\DI::getInstance();
+
+        foreach ($log_names as $name) {
+            // 日志服务_不_是共享服务
+            $di->set($name . '_log', \Library\Log\LoggerProvider::getLogger($name));
+        }
+    }
+
+    /**
+     * 注册数据库服务(用Medoo类连接数据库)
+     * @author: xieyong <qxieyongp@163.com>
+     */
+    public function _init_database()
+    {
+        $db_config_array = \Library\Config\ConfigManager::getInstance()->getConfig('database')->toArray();
+
+        if (! empty($db_config_array)) {
+            foreach ($db_config_array as $name => $config) {
+                // 数据库连接是共享服务
+                \Library\DI\DI::getInstance()->setShared($name . '_db', \Library\Database\MedooProvider::getMedoo($config));
+            }
+        }
     }
 }

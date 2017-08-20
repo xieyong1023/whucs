@@ -2,21 +2,27 @@
 /**
  * 控制器基类
  *
- * @author: xieyong <xieyong1023@qq.com>
+ * @author: xieyong <qxieyongp@163.com>
  * @date: 2017/8/7
  * @time: 13:56
  */
 
 namespace Library\Core;
 
-class BaseController extends Yaf_Controller_Abstract
+class BaseController extends \Yaf_Controller_Abstract
 {
     public function init()
     {
-        parent::init();
     }
 
-    protected function outputJson($data = '', int $error = 0, string $msg = 'ok')
+    /**
+     * json输出
+     * @author: xieyong <qxieyongp@163.com>
+     * @param array  $data 要输出数据
+     * @param int    $error 错误号 0-无错误 其他-有错
+     * @param string $msg 错误消息
+     */
+    protected function outputJson($data = [], int $error = 0, string $msg = 'ok')
     {
         $rtv = [
             'error' => $error,
@@ -24,9 +30,25 @@ class BaseController extends Yaf_Controller_Abstract
             'data' => $data,
         ];
 
+        \Yaf_Dispatcher::getInstance()->disableView();
         $response = $this->getResponse();
         $response->setHeader('Content-Type', 'application/json');
         $response->setBody(\json_encode($rtv));
-        $response->response();
+    }
+
+    /**
+     * 禁用自动渲染
+     * @author: xieyong <qxieyongp@163.com>
+     */
+    protected function disableView()
+    {
+        \Yaf_Dispatcher::getInstance()->disableView();
+    }
+
+    protected function show_404()
+    {
+        $this->disableView();
+        echo $this->getViewpath();
+        echo $this->render('error404');
     }
 }
