@@ -29,6 +29,10 @@ class Service
      * @var bool 是否是共享服务
      */
     protected $is_shared = false;
+    /**
+     * @var Service 若服务为已共享，则保存当前服务实例
+     */
+    protected $shared_instance = null;
 
     /**
      * Service constructor.
@@ -53,18 +57,30 @@ class Service
      * @return mixed
      * @throws DIException
      */
-    public function invoke($param = [])
+    public function invoke(...$param)
     {
-        // 服务定义为函数闭包时，直接调用
-        if (! is_callable($this->define)) {
-            throw new DIException('SERVICE_DEFINE_IS_NOT_CALLABLE');
+        // 共享服务返回已共享实例
+        if ($this->is_shared && $this->shared_instance !== null) {
+            return $this->shared_instance;
         }
 
-        if (is_array($param)) {
-            return call_user_func_array($this->define, $param);
-        } else {
-            return call_user_func_array($this->define, [$param]);
+        // 服务为已加载的类类名，则生成实例
+        if (is_string($this->define) && class_exists($this->define)) {
+            $class_reflection = new \ReflectionClass($this->define);
+            $instance = $class_reflection->newInstanceArgs($param);
         }
+
+        // 服务定义为函数闭包时，直接调用
+        if (is_callable($this->define, true)) {
+            $instance = call_user_func_array($this->define, $param);
+        }
+
+        // 共享服务则保存实例
+        if ($this->is_shared) {
+            $this->shared_instance = $instance;
+        }
+
+        return $instance;
     }
 
     /**
@@ -74,17 +90,6 @@ class Service
      */
     public function isShared()
     {
-        return (true === $this->is_shared);
-    }
-
-    /**
-     * 设置是否共享
-     * @author: xieyong <qxieyongp@163.com>
-     *
-     * @param bool $is_shared
-     */
-    public function setShared(bool $is_shared)
-    {
-        $this->is_shared = $is_shared;
+        return $this->is_shared;
     }
 }

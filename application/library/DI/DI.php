@@ -43,13 +43,11 @@ class DI
      */
     public static function getInstance()
     {
-        if (self::$_instance instanceof self) {
-            return self::$_instance;
-        } else {
+        if (! self::$_instance instanceof self) {
             self::$_instance = new self();
-
-            return self::$_instance;
         }
+
+        return self::$_instance;
     }
 
     /**
@@ -81,7 +79,7 @@ class DI
      * @return mixed
      * @throws DIException
      */
-    public function get(string $name, $params = [])
+    public function get(string $name, ...$params)
     {
         if (! isset($this->services[$name])) {
             throw new DIException('SERVICE_NOT_DEFINED');
@@ -95,6 +93,7 @@ class DI
     /**
      * 设置共享服务
      * @author: xieyong <qxieyongp@163.com>
+     *
      * @param string $name 服务名
      * @param        $define
      *
@@ -110,7 +109,17 @@ class DI
         $this->shared_services[$name] = $service;
     }
 
-    public function getShared(string $name, $params = [])
+    /**
+     * 获取共享服务
+     * @author: xieyong <qxieyongp@163.com>
+     *
+     * @param string $name 服务名
+     * @param array  $params 调用参数
+     *
+     * @return mixed
+     * @throws DIException
+     */
+    public function getShared(string $name, ...$params)
     {
         if (! isset($this->shared_services[$name])) {
             throw new DIException('SERVICE_NOT_DEFINED');
