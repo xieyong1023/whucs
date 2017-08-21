@@ -18,6 +18,11 @@ class DebugController extends BaseController
      * @var \Library\Log\Logger
      */
     protected $logger = null;
+    /**
+     * @var \Library\Database\Medoo
+     */
+    protected $medoo = null;
+
     public function indexAction()
     {
         echo 'debug';
@@ -27,35 +32,21 @@ class DebugController extends BaseController
     {
         $this->disableView();
 
-        $data = [
-//            'foo' => 'value1',
-            'bar' => 'value2',
-        ];
+//        $this->medoo = DI::getInstance()->getShared('default_db');
+//
+//        $data = $this->medoo->update(
+//            'test', ['id'=>1, 'username' => 'x', 'password' => 'a'], ['id' => 1]
+//        );
 
-        $rules = [
-            'foo' => [
-                'rules' => ['required'],
-                'label' => '用户名',
-            ],
-            'bar'=> [
-                'rules' => ['email', ['lengthMin', 4]],
-//                'label' => '密码',
-            ],
-        ];
+        $a = new \Library\Tools\UserAgent();
+        var_dump($a);
 
-
-        $v = ValidatorProvider::buildValidator($data, $rules);
-
-        if (! $v->validate()) {
-            var_dump($v->errors());
-        }
-        var_dump($v);
     }
 
-    public function test($a, $b)
+    public function test(...$params)
     {
 
-        var_dump($a, $b);
+        var_dump($params);
 
     }
 }

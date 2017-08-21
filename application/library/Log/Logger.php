@@ -279,4 +279,23 @@ class Logger
     {
         $this->log(self::EMERGENCY, $msg);
     }
+
+    /**
+     * 记录异常信息
+     * @author: xieyong <qxieyongp@163.com>
+     *
+     * @param \Exception $e
+     */
+    public function logException(\Exception $e)
+    {
+        $msg = [
+            'code:' . $e->getCode(),
+            'msg:' . $e->getMessage(),
+            'file:' . $e->getFile(),
+            'line:' . $e->getLine(),
+            'trace:' . $e->getTraceAsString(),
+        ];
+
+        $this->log(self::ERROR, ...$msg);
+    }
 }

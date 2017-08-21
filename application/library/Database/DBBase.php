@@ -27,14 +27,6 @@ class DBBase
      */
     protected $table = '';
     /**
-     * @var \PDO 主数据库
-     */
-    protected $master = null;
-    /**
-     * @var array 从数据库
-     */
-    protected $slaves = [];
-    /**
      * @var DI
      */
     protected $di = null;
@@ -65,16 +57,5 @@ class DBBase
             $this->logException($e);
             return [];
         }
-    }
-
-
-    protected function logException(\PDOException $e)
-    {
-        $this->logger->error(
-            'code:' . $e->getCode(),
-            'msg:' . $e->getMessage(),
-            'file:' . $e->getFile(),
-            'line:' . $e->getLine()
-        );
     }
 }

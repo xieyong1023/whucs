@@ -24,7 +24,7 @@ class ConfigManager
     /**
      * @var string 配置文件路径
      */
-    protected static $_config_path = CONFIG_PATH;
+    protected $config_path = CONFIG_PATH;
     /**
      * @var array 缓存
      */
@@ -50,17 +50,6 @@ class ConfigManager
         }
 
         return self::$_instance;
-    }
-
-    /**
-     * 设置配置文件路径
-     * @author: xieyong <qxieyongp@163.com>
-     *
-     * @param string $path
-     */
-    public static function setConfigFilePath(string $path)
-    {
-        self::$_config_path = $path;
     }
 
     /**
@@ -96,11 +85,11 @@ class ConfigManager
      */
     protected function loadConfigFile(string $filename)
     {
-        if (empty(self::$_config_path)) {
+        if (empty($this->config_path)) {
             throw new ConfigException('CONFIG_PATH_NOT_SET');
         }
 
-        $config_file_path = rtrim(self::$_config_path, DIRECTORY_SEPARATOR);
+        $config_file_path = rtrim($this->config_path, DIRECTORY_SEPARATOR);
         $file_path = $config_file_path . DIRECTORY_SEPARATOR . $filename . '.php';
 
         if (! file_exists($file_path)) {

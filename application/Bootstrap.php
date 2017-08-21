@@ -28,15 +28,6 @@ class Bootstrap extends Yaf_Bootstrap_Abstract{
     }
 
     /**
-     * 初试化配置文件路径
-     * @author: xieyong <qxieyongp@163.com>
-     */
-    public function _init_config_path()
-    {
-        \Library\Config\ConfigManager::setConfigFilePath(CONFIG_PATH);
-    }
-
-    /**
      * 设置异常语言
      * @author: xieyong <qxieyongp@163.com>
      */
@@ -89,13 +80,13 @@ class Bootstrap extends Yaf_Bootstrap_Abstract{
      */
     public function _init_database()
     {
-//        $db_config_array = \Library\Config\ConfigManager::getInstance()->getConfig('database')->toArray();
-//
-//        if (! empty($db_config_array)) {
-//            foreach ($db_config_array as $name => $config) {
-//                // 数据库连接是共享服务
-//                \Library\DI\DI::getInstance()->setShared($name . '_db', \Library\Database\MedooProvider::getMedoo($config));
-//            }
-//        }
+        $db_config_array = \Library\Config\ConfigManager::getInstance()->getConfig('database')->toArray();
+
+        if (! empty($db_config_array)) {
+            foreach ($db_config_array as $name => $config) {
+                // 数据库连接是共享服务
+                \Library\DI\DI::getInstance()->setShared($name . '_db', \Library\Database\MedooProvider::getMedoo($config));
+            }
+        }
     }
 }
