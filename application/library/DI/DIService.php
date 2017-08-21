@@ -15,7 +15,7 @@ use Library\Exception\DIException;
  * Class Service
  * @package Library\DI
  */
-class Service
+class DIService
 {
     /**
      * @var string 服务名
@@ -30,7 +30,7 @@ class Service
      */
     protected $is_shared = false;
     /**
-     * @var Service 若服务为已共享，则保存当前服务实例
+     * @var DIService 若服务为已共享，则保存当前服务实例
      */
     protected $shared_instance = null;
 

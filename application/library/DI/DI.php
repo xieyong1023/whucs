@@ -65,7 +65,7 @@ class DI
             throw new DIException('SERVICE_DUPLICATE_DEFINE');
         }
 
-        $service = new Service($name, $define, false);
+        $service = new DIService($name, $define, false);
         $this->services[$name] = $service;
     }
 
@@ -105,7 +105,7 @@ class DI
             throw new DIException('SERVICE_DUPLICATE_DEFINE');
         }
 
-        $service = new Service($name, $define, true);
+        $service = new DIService($name, $define, true);
         $this->shared_services[$name] = $service;
     }
 

@@ -45,13 +45,11 @@ class ConfigManager
      */
     public static function getInstance()
     {
-        if (self::$_instance instanceof self) {
-            return self::$_instance;
-        } else {
+        if (! self::$_instance instanceof self) {
             self::$_instance = new self();
-
-            return self::$_instance;
         }
+
+        return self::$_instance;
     }
 
     /**
