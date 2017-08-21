@@ -9,6 +9,8 @@
 
 use Library\DI\DI;
 use Library\Core\BaseController;
+use \Library\Tools\Validator\Validator;
+use \Library\Tools\Validator\ValidatorProvider;
 
 class DebugController extends BaseController
 {
@@ -25,14 +27,35 @@ class DebugController extends BaseController
     {
         $this->disableView();
 
-        $a = new \Library\Mysql\Test();
+        $data = [
+//            'foo' => 'value1',
+            'bar' => 'value2',
+        ];
 
-        var_dump($a->getOne());
+        $rules = [
+            'foo' => [
+                'rules' => ['required'],
+                'label' => '用户名',
+            ],
+            'bar'=> [
+                'rules' => ['email', ['lengthMin', 4]],
+//                'label' => '密码',
+            ],
+        ];
+
+
+        $v = ValidatorProvider::buildValidator($data, $rules);
+
+        if (! $v->validate()) {
+            var_dump($v->errors());
+        }
+        var_dump($v);
     }
 
-    public function test(...$msg)
+    public function test($a, $b)
     {
-        var_dump(implode(',', $msg));
-        var_dump($msg);
+
+        var_dump($a, $b);
+
     }
 }

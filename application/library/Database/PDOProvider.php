@@ -30,4 +30,9 @@ class PDOProvider
 
         }
     }
+
+    public function test(int $a)
+    {
+
+    }
 }

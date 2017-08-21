@@ -89,13 +89,13 @@ class Bootstrap extends Yaf_Bootstrap_Abstract{
      */
     public function _init_database()
     {
-        $db_config_array = \Library\Config\ConfigManager::getInstance()->getConfig('database')->toArray();
-
-        if (! empty($db_config_array)) {
-            foreach ($db_config_array as $name => $config) {
-                // 数据库连接是共享服务
-                \Library\DI\DI::getInstance()->setShared($name . '_db', \Library\Database\MedooProvider::getMedoo($config));
-            }
-        }
+//        $db_config_array = \Library\Config\ConfigManager::getInstance()->getConfig('database')->toArray();
+//
+//        if (! empty($db_config_array)) {
+//            foreach ($db_config_array as $name => $config) {
+//                // 数据库连接是共享服务
+//                \Library\DI\DI::getInstance()->setShared($name . '_db', \Library\Database\MedooProvider::getMedoo($config));
+//            }
+//        }
     }
 }

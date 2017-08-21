@@ -87,7 +87,7 @@ class DI
 
         $service = $this->services[$name];
 
-        return $service->invoke($params);
+        return $service->invoke(...$params);
     }
 
     /**
@@ -127,6 +127,6 @@ class DI
 
         $service = $this->shared_services[$name];
 
-        return $service->invoke($params);
+        return $service->invoke(...$params);
     }
 }

@@ -13,7 +13,7 @@ namespace Library;
  * Class Tools
  * @package Library
  */
-class Tools
+class Encrypt
 {
     /**
      * 字符串加密以及解密函数
@@ -84,10 +84,5 @@ class Tools
         } else {
             return $keyc . str_replace('=', '', base64_encode($result));
         }
-    }
-
-    public static function staticUrl(string $url)
-    {
-
     }
 }
