@@ -48,6 +48,14 @@ class Logger
      */
     protected $cache = [];
     /**
+     * @var int 缓存域值
+     */
+    protected $delay_threshold = 200;
+    /**
+     * @var int 缓存行数
+     */
+    protected $cache_count = 0;
+    /**
      * @var string 阈值
      */
     protected $threshold = self::DEBUG;
@@ -95,6 +103,13 @@ class Logger
         // 延迟写入时，日记先保存到cache中，程序结束时执行写操作
         if ($this->delay_write) {
             array_push($this->cache, $log_line);
+            $this->cache_count++;
+
+            // 缓存达到域值立即写入
+            if ($this->cache_count == $this->delay_threshold) {
+                $this->write($this->cache);
+                $this->clearCache();
+            }
         } else {
             $this->write([$log_line]);
         }
@@ -129,6 +144,16 @@ class Logger
         if (! empty($content)) {
             $this->writer->write($this->log_name, $content);
         }
+    }
+
+    /**
+     * 清楚缓存
+     * @author: xieyong <qxieyongp@163.com>
+     */
+    private function clearCache()
+    {
+        $this->cache = [];
+        $this->cache_count = 0;
     }
 
     /**
