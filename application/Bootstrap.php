@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * 所有在Bootstrap类中, 以_init开头的方法, 都会被Yaf调用,
@@ -10,9 +11,8 @@
  * @time: 14:12
  * @see http://www.laruence.com/manual/yaf.class.bootstrap.html
  */
-
-class Bootstrap extends Yaf_Bootstrap_Abstract{
-
+class Bootstrap extends Yaf_Bootstrap_Abstract
+{
     /**
      * 是否输出错误
      */
@@ -48,6 +48,7 @@ class Bootstrap extends Yaf_Bootstrap_Abstract{
 
     /**
      * 注册路由
+     *
      * @param Yaf_Dispatcher $dispatcher
      */
     public function _init_route(Yaf_Dispatcher $dispatcher)
@@ -64,6 +65,8 @@ class Bootstrap extends Yaf_Bootstrap_Abstract{
     {
         $log_names = [
             'debug',             // debug
+            'error',             // 错误日志
+            'db_connection',     // 数据库连接日志
             'database',          // 数据库日志
         ];
 
@@ -86,7 +89,8 @@ class Bootstrap extends Yaf_Bootstrap_Abstract{
         if (! empty($db_config_array)) {
             foreach ($db_config_array as $name => $config) {
                 // 数据库连接是共享服务
-                \Library\DI\DI::getInstance()->setShared($name . '_db', \Library\Database\MedooProvider::getMedoo($config));
+                \Library\DI\DI::getInstance()
+                    ->setShared($name . '_db', \Library\Database\MedooProvider::getMedoo($config));
             }
         }
     }

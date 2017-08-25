@@ -9,7 +9,7 @@
 
 namespace Library\Exception;
 
-use \Library\Core\Exception;
+use Library\Core\Exception;
 
 /**
  * Class ConfigException

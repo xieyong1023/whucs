@@ -26,7 +26,7 @@ class LoggerProvider
      */
     public static function getLogger(string $log_name)
     {
-        $logger_closure =  function ($option) use ($log_name) {
+        $logger_closure =  function ($option = []) use ($log_name) {
             $writer = new FileWriter(LOG_PATH);
 
             return new Logger($log_name, $writer, $option);

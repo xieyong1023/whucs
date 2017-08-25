@@ -9,7 +9,7 @@
 
 namespace Library\Config;
 
-use \Library\Exception\ConfigException;
+use Library\Exception\ConfigException;
 
 /**
  * Class Config

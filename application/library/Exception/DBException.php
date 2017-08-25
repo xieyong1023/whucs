@@ -21,6 +21,6 @@ class DBException extends Exception
      * @var array 范围 102000 ~ 103000
      */
     protected $map = [
-
+        'DB_CONNECTION_ERROR' => ['code' => 102001, 'zh_cn' => '数据库连接错误'],
     ];
 }

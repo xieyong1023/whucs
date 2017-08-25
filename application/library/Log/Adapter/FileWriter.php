@@ -9,7 +9,7 @@
 
 namespace Library\Log\Adapter;
 
-use \Library\Log\LogWriter;
+use Library\Log\LogWriter;
 
 /**
  * Class FileWriter

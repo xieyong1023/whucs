@@ -9,6 +9,9 @@
 
 namespace Library\Database;
 
+use Library\DI\DI;
+use PDO;
+
 /**
  * Class PDOProvider
  * @package Library\Database
@@ -36,11 +39,18 @@ class MedooProvider
                 'prefix'        => '',
                 'logging'       => false,
                 'option'        => [
-                    \PDO::ATTR_CASE => \PDO::CASE_NATURAL,
+                    PDO::ATTR_CASE => PDO::CASE_NATURAL, // 保留数据库驱动返回的列名。
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, // 抛出异常
+                    PDO::ATTR_PERSISTENT => $config['persistent']  // 是否使用持久化连接
                 ],
             ];
 
-            return new Medoo($params);
+            try {
+                return new Medoo($params);
+            } catch (\PDOException $e) {
+                DI::getInstance()->get('db_connection_log')->logException($e);
+                return false;
+            }
         };
     }
 }

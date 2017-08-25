@@ -17,5 +17,6 @@ return [
         'password'      => '123456',      // 密码
         'charset'       => 'utf8',        // 字符集
         'prefix'        => '',            // 表前缀
+        'persistent'    => false,         // 是否长连接
     ],
 ];

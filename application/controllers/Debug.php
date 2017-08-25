@@ -36,8 +36,7 @@ class DebugController extends BaseController
     {
         $this->disableView();
 
-
-
+        $this->db();
     }
 
     public function log()
@@ -50,12 +49,28 @@ class DebugController extends BaseController
 
     public function db()
     {
-        //        $this->medoo = DI::getInstance()->getShared('default_db');
-//
+        $db = new \Library\Database\DBBase();
+
 //        $data = $this->medoo->update(
 //            'test', ['id'=>1, 'username' => 'x', 'password' => 'a'], ['id' => 1]
 //        );
 
-//        var_dump(\Library\Tools\Encrypt::encrypt('abcd', 'ENCODE', 'e66c63606d6179dd25e93ddd87d38c89'));}
+        $user = [
+            'username' => '111xy',
+            'nickname' => '111xieyong',
+            'password' => '1234',
+            'student_id' => '123',
+            'group_id' => 0,
+            'create_time' => NOW_TIME,
+            'update_time' => NOW_TIME,
+            'status' => 0,
+        ];
+//        try{
+            $data = $db->replace('user_core',['username' => '3333'], ['username' => '1111']);
+//        } catch (\Exception $e) {
+//            echo 'aa';
+//        }
+
+        var_dump($data);
     }
 }
