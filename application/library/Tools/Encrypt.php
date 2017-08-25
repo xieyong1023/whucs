@@ -7,7 +7,7 @@
  * @Time: 22:19
  */
 
-namespace Library;
+namespace Library\Tools;
 
 /**
  * Class Tools

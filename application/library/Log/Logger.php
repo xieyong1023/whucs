@@ -9,8 +9,6 @@
 
 namespace Library\Log;
 
-use Library\Exception\LogException;
-
 /**
  * Class Logger
  * @package Library\Log
@@ -40,48 +38,46 @@ class Logger
         self::EMERGENCY => 'emergency',
     ];
     /**
+     * @var array 设置
+     */
+    protected $option = [
+        'max_buffer_size' => 200,          // 缓冲区最大值
+        'log_threshold'   => self::DEBUG,  // 阈值
+        'delay_write'     => true,         // 是否延迟写入
+        'seperator'       => "\x1e",       // 记录分隔符
+    ];
+    /**
      * @var string 日志名
      */
     protected $log_name = '';
     /**
      * @var array 缓存
      */
-    protected $cache = [];
-    /**
-     * @var int 缓存域值
-     */
-    protected $delay_threshold = 200;
+    protected $buffer = [];
     /**
      * @var int 缓存行数
      */
-    protected $cache_count = 0;
-    /**
-     * @var string 阈值
-     */
-    protected $threshold = self::DEBUG;
+    protected $buffer_length = 0;
     /**
      * @var LogWriter 写日志类
      */
     protected $writer = null;
-    /**
-     * @var bool 是否延迟写入
-     */
-    protected $delay_write = true;
-    /**
-     * @var string 分隔符
-     */
-    protected $separator = ' ';
 
     /**
      * Logger constructor.
      *
-     * @param string    $log_name
-     * @param LogWriter $writer
+     * @param string    $log_name 日志名
+     * @param LogWriter $writer 执行写操作的对象
+     * @param array     $option 设置
      */
-    public function __construct(string $log_name, LogWriter $writer)
+    public function __construct(string $log_name, LogWriter $writer, array $option = [])
     {
         $this->log_name = $log_name . '_' . DATE_STRING;
         $this->writer = $writer;
+
+        if (! empty($option)) {
+            $this->option = array_merge($this->option, $option);
+        }
     }
 
     /**
@@ -89,25 +85,25 @@ class Logger
      * @author: xieyong <qxieyongp@163.com>
      *
      * @param int   $level 异常等级
-     * @param array ...$msg
+     * @param array $msg 错误消息 [msg1, msg2, ..., msgn] 按顺序组合
      */
-    protected function log(int $level, ...$msg)
+    protected function log(int $level, array $msg)
     {
-        // 只记录超过阈值的异常
-        if ($level <= $this->threshold) {
+        // 过滤不超过阈值的异常
+        if ($level < $this->option['log_threshold']) {
             return;
         }
 
         $log_line = $this->format_line($level, $msg);
 
-        // 延迟写入时，日记先保存到cache中，程序结束时执行写操作
-        if ($this->delay_write) {
-            array_push($this->cache, $log_line);
-            $this->cache_count++;
+        // 延迟写入时，日记先保存到buffer中，程序结束时执行写操作
+        if ($this->option['delay_write']) {
+            array_push($this->buffer, $log_line);
+            $this->buffer_length++;
 
             // 缓存达到域值立即写入
-            if ($this->cache_count == $this->delay_threshold) {
-                $this->write($this->cache);
+            if ($this->buffer_length == $this->option['max_buffer_size']) {
+                $this->write($this->buffer);
                 $this->clearCache();
             }
         } else {
@@ -120,17 +116,17 @@ class Logger
      * @author: xieyong <qxieyongp@163.com>
      *
      * @param int   $level 异常等级
-     * @param array ...$msg 异常信息 可为string or array
+     * @param array $msg 异常信息 [msg1, msg2, ..., msgn] 按顺序组合
      *
      * @return string
      */
-    protected function format_line(int $level, ...$msg)
+    protected function format_line(int $level, array $msg)
     {
-        $datatime = '[' . DATE_TIME_STRING . ']';
+        $datatime = '[' . date(DATE_FMT, time()) . ']';
 
-        $msg = implode($this->separator, $msg);
+        $msg = implode($this->option['seperator'], $msg);
 
-        return implode($this->separator, [$datatime, $this->level[$level], $msg]) . PHP_EOL;
+        return implode($this->option['seperator'], [$datatime, $this->level[$level], $msg]) . PHP_EOL;
     }
 
     /**
@@ -152,8 +148,8 @@ class Logger
      */
     private function clearCache()
     {
-        $this->cache = [];
-        $this->cache_count = 0;
+        $this->buffer = [];
+        $this->buffer_length = 0;
     }
 
     /**
@@ -161,35 +157,7 @@ class Logger
      */
     function __destruct()
     {
-        $this->write($this->cache);
-    }
-
-    /**
-     * 设置日志记录阈值
-     * @author: xieyong <qxieyongp@163.com>
-     *
-     * @param int $threshold 阈值
-     *
-     * @throws LogException
-     */
-    public function setThreshold(int $threshold)
-    {
-        if (! array_key_exists($threshold, $this->level)) {
-            throw new LogException('INVALID_EXCEPTION_LEVEL');
-        }
-
-        $this->threshold = $threshold;
-    }
-
-    /**
-     * 设置是否延迟写日志
-     * @author: xieyong <qxieyongp@163.com>
-     *
-     * @param bool $delay_write true-延迟写入 false-不延迟写入
-     */
-    public function setDelayWrite(bool $delay_write)
-    {
-        $this->delay_write = $delay_write;
+        $this->write($this->buffer);
     }
 
     /**
@@ -296,6 +264,6 @@ class Logger
             'trace:' . $e->getTraceAsString(),
         ];
 
-        $this->log(self::ERROR, ...$msg);
+        $this->log(self::ERROR, $msg);
     }
 }

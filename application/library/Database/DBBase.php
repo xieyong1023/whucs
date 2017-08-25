@@ -49,6 +49,8 @@ class DBBase
         $this->logger = $this->di->get($this->logger_name . '_log');
     }
 
+
+
     public function getOne(array $colums = [], $where = [])
     {
         try {

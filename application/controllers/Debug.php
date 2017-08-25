@@ -23,6 +23,10 @@ class DebugController extends BaseController
      */
     protected $medoo = null;
 
+    protected $a = [
+        'a' => 123,
+    ];
+
     public function indexAction()
     {
         echo 'debug';
@@ -32,21 +36,26 @@ class DebugController extends BaseController
     {
         $this->disableView();
 
-//        $this->medoo = DI::getInstance()->getShared('default_db');
+
+
+    }
+
+    public function log()
+    {
+        $this->logger = DI::getInstance()->get('debug_log', ['seperator' => "\x1e"]);
+
+//        var_dump($this->logger);
+        $this->logger->error('hello');
+    }
+
+    public function db()
+    {
+        //        $this->medoo = DI::getInstance()->getShared('default_db');
 //
 //        $data = $this->medoo->update(
 //            'test', ['id'=>1, 'username' => 'x', 'password' => 'a'], ['id' => 1]
 //        );
 
-        $a = new \Library\Tools\UserAgent();
-        var_dump($a);
-
-    }
-
-    public function test(...$params)
-    {
-
-        var_dump($params);
-
+//        var_dump(\Library\Tools\Encrypt::encrypt('abcd', 'ENCODE', 'e66c63606d6179dd25e93ddd87d38c89'));}
     }
 }

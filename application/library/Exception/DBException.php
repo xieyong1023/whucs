@@ -18,7 +18,7 @@ use Library\Core\Exception;
 class DBException extends Exception
 {
     /**
-     * @var array 范围 103000 ~ 104000
+     * @var array 范围 102000 ~ 103000
      */
     protected $map = [
 
