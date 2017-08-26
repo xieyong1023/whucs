@@ -12,7 +12,6 @@ namespace Library\Database;
 use Library\DI\DI;
 use Library\Exception\DBException;
 use Library\Log\Logger;
-use PDO;
 
 /**
  * Class DBBase
@@ -69,7 +68,6 @@ class DBBase
      * 获取数据
      * @author: xieyong <qxieyongp@163.com>
      *
-     * @param string       $table 表名
      * @param string|array $columns
      * colums:
      *      '*' // 获取所有列
@@ -102,17 +100,16 @@ class DBBase
      *
      * @return array|bool
      */
-    public function getData(string $table, $columns, $where = null)
+    public function getData($columns, $where = null)
     {
-        return $this->medoo->select($table, $columns, $where);
+        return $this->medoo->select($this->table, $columns, $where);
     }
 
     /**
      * 表连接
      * @author: xieyong <qxieyongp@163.com>
      *
-     * @param string       $table 表名
-     * @param              $join 连接语句
+     * @param array        $join 连接语句
      * [>] == LEFT JOIN
      * [<] == RIGH JOIN
      * [<>] == FULL JOIN
@@ -147,16 +144,15 @@ class DBBase
      *
      * @return array|bool
      */
-    public function getDataWithJoin(string $table, array $join, $columns, $where = null)
+    public function getDataWithJoin(array $join, $columns, $where = null)
     {
-        return $this->medoo->select($table, $join, $columns, $where);
+        return $this->medoo->select($this->table, $join, $columns, $where);
     }
 
     /**
      * 获取一条数据
      * @author: xieyong <qxieyongp@163.com>
      *
-     * @param string       $table
      * @param string|array $columns
      * @param array|null   $where
      * =:
@@ -208,9 +204,9 @@ class DBBase
      *
      * @return array|bool|mixed
      */
-    public function getOne(string $table, $columns, $where = null)
+    public function getOne($columns, $where = null)
     {
-        return $this->medoo->get($table, $columns, $where);
+        return $this->medoo->get($this->table, $columns, $where);
     }
 
     /**
@@ -220,14 +216,13 @@ class DBBase
      *
      * @author: xieyong <qxieyongp@163.com>
      *
-     * @param string $table 表名
-     * @param array  ...$data 插入数据
+     * @param array ...$data 插入数据
      *
      * @return \PDOStatement
      */
-    public function insert(string $table, ...$data)
+    public function insert(...$data)
     {
-        return $this->medoo->insert($table, ...$data);
+        return $this->medoo->insert($this->table, ...$data);
     }
 
     /**
@@ -244,7 +239,6 @@ class DBBase
      * 更新
      * @author: xieyong <qxieyongp@163.com>
      *
-     * @param string     $table 表名
      * @param array      $data 数据
      *
      * "type" => "user",
@@ -280,126 +274,118 @@ class DBBase
      *
      * @return \PDOStatement
      */
-    public function update(string $table, array $data, $where = null)
+    public function update(array $data, $where = null)
     {
-        return $this->medoo->update($table, $data, $where);
+        return $this->medoo->update($this->table, $data, $where);
     }
 
     /**
      * 删除
      * @author: xieyong <qxieyongp@163.com>
      *
-     * @param string $table 表名
-     * @param array  $where 见getOne()
+     * @param array $where 见getOne()
      *
      * @return \PDOStatement
      */
-    public function delete(string $table, array $where)
+    public function delete(array $where)
     {
-        return $this->medoo->delete($table, $where);
+        return $this->medoo->delete($this->table, $where);
     }
 
     /**
      * 替换
      * @author: xieyong <qxieyongp@163.com>
      *
-     * @param string $table 表名
      * @param        $colums 列名
      * @param null   $where 见getOne()
      *
      * @return bool|\PDOStatement
      */
-    public function replace(string $table, $colums, $where = null)
+    public function replace($colums, $where = null)
     {
-        return $this->medoo->replace($table, $colums, $where);
+        return $this->medoo->replace($this->table, $colums, $where);
     }
 
     /**
      * 检测是否存在
      * @author: xieyong <qxieyongp@163.com>
      *
-     * @param string $table 表名
-     * @param array  $where 见getOne()
+     * @param array $where 见getOne()
      *
      * @return bool
      */
-    public function isExist(string $table, array $where)
+    public function isExist(array $where)
     {
-        return $this->medoo->has($table, $where);
+        return $this->medoo->has($this->table, $where);
     }
 
     /**
      * 计算总数
      * @author: xieyong <qxieyongp@163.com>
      *
-     * @param string $table 表名
-     * @param null   $where 见getOne()
+     * @param null $where 见getOne()
      *
      * @return bool|int
      */
-    public function getCount(string $table, $where = null)
+    public function getCount($where = null)
     {
-        return $this->medoo->count($table, $where);
+        return $this->medoo->count($this->table, $where);
     }
 
     /**
      * 获取某一列的最大值
      * @author: xieyong <qxieyongp@163.com>
      *
-     * @param string $table 表名
      * @param string $column 列名
      * @param null   $where 见getOne
      *
      * @return bool|int|string
      */
-    public function getMax(string $table, string $column, $where = null)
+    public function getMax(string $column, $where = null)
     {
-        return $this->medoo->max($table, $column, $where);
+        return $this->medoo->max($this->table, $column, $where);
     }
 
     /**
      * 获取某一列最小值
      * @author: xieyong <qxieyongp@163.com>
      *
-     * @param string $table 表名
      * @param string $column 列名
      * @param null   $where 见getOne
      *
      * @return bool|int|string
      */
-    public function getMin(string $table, string $column, $where = null)
+    public function getMin(string $column, $where = null)
     {
-        return $this->medoo->min($table, $column, $where);
+        return $this->medoo->min($this->table, $column, $where);
     }
 
     /**
      * 获取某一列平均值
      * @author: xieyong <qxieyongp@163.com>
      *
-     * @param string $table 表名
      * @param string $column 列名
      * @param null   $where 见getOne
      *
      * @return bool|int
      */
-    public function getAvg(string $table, string $column, $where = null)
+    public function getAvg(string $column, $where = null)
     {
-        return $this->medoo->avg($table, $column, $where);
+        return $this->medoo->avg($this->table, $column, $where);
     }
 
     /**
      * 计算某一列的和
      * @author: xieyong <qxieyongp@163.com>
      *
-     * @param string $table 表名
      * @param string $column 列名
      * @param null   $where 见getOne
      *
      * @return bool|int
      */
-    public function getSum(string $table, string $column, $where = null)
+    public function getSum(string $column, $where = null)
     {
-        return $this->medoo->sum($table, $column, $where);
+        return $this->medoo->sum($this->table, $column, $where);
     }
 
     /**
