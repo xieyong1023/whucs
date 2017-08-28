@@ -18,13 +18,11 @@ class LoginController extends AdminController
 
     public function showLoginAction()
     {
-        $this->disableView();
         echo 'show login action';
     }
 
     public function doLoginAction()
     {
-        $this->disableView();
         echo 'admin index';
     }
 }

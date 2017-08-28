@@ -20,17 +20,17 @@ class Service
      */
     protected $option = [];
     /**
-     * @var DI
+     * @var string 服务层日志名（继承类需要设置）
      */
-    protected $id = null;
+    protected $log_name = '';
     /**
      * @var Logger
      */
     protected $logger = null;
     /**
-     * @var string 服务层日志名（继承类需要设置）
+     * @var DI
      */
-    protected $log_name = '';
+    protected $id = null;
 
     /**
      * Service constructor.

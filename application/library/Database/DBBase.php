@@ -2,6 +2,10 @@
 /**
  * 数据库操作基类
  *
+ * 良好的设计原则之一：高内聚、低耦合。
+ * 将所有数据库操作都封装在数据库访问层中，只有该层了解数据库结构。
+ * 捕获所有数据库异常PDOException并重新抛出DBException异常，让一下层处理。
+ *
  * @author: xieyong <qxieyongp@163.com>
  * @Date: 2017/8/20
  * @Time: 13:44
@@ -103,11 +107,18 @@ class DBBase
      *      ['nickname(my_nickname)'] // Output my_nickname => value
      * @param array|null   $where 见getOne
      *
-     * @return array|bool
+     * @return array
+     * @throws DBException
      */
     public function getData($columns = '*', $where = null)
     {
-        return $this->medoo->select($this->table, $columns, $where);
+        try {
+            return $this->medoo->select($this->table, $columns, $where);
+        } catch (\PDOException $e) {
+            $this->logger->logException($e);
+
+            throw new DBException('DB_ERROR');
+        }
     }
 
     /**
@@ -147,11 +158,18 @@ class DBBase
      * @param string|array $columns
      * @param array|null   $where
      *
-     * @return array|bool
+     * @return array
+     * @throws DBException
      */
     public function getDataWithJoin(array $join, $columns = '*', $where = null)
     {
-        return $this->medoo->select($this->table, $join, $columns, $where);
+        try {
+            return $this->medoo->select($this->table, $join, $columns, $where);
+        } catch (\PDOException $e) {
+            $this->logger->logException($e);
+
+            throw new DBException('DB_ERROR');
+        }
     }
 
     /**
@@ -207,11 +225,18 @@ class DBBase
      * HAVING:
      *      [HAVING => ['col[>]' => 'value']]
      *
-     * @return array|bool|mixed
+     * @return array
+     * @throws DBException
      */
     public function getOne($columns = '*', $where = null)
     {
-        return $this->medoo->get($this->table, $columns, $where);
+        try {
+            return $this->medoo->get($this->table, $columns, $where);
+        } catch (\PDOException $e) {
+            $this->logger->logException($e);
+
+            throw new DBException('DB_ERROR');
+        }
     }
 
     /**
@@ -232,24 +257,37 @@ class DBBase
             throw new DBException('INSERT_TOO_MANY_ITEMS');
         }
 
-        return $this->medoo->insert($this->table, ...$data);
+        try {
+            return $this->medoo->insert($this->table, ...$data);
+        } catch (\PDOException $e) {
+            $this->logger->logException($e);
+
+            throw new DBException('DB_ERROR');
+        }
     }
 
     /**
      * 返回自增键值
      * @author: xieyong <qxieyongp@163.com>
-     * @return int|string
+     * @return int
+     * @throws DBException
      */
     public function lastInsertId()
     {
-        return $this->medoo->id();
+        try {
+            return $this->medoo->id();
+        } catch (\PDOException $e) {
+            $this->logger->logException($e);
+
+            throw new DBException('DB_ERROR');
+        }
     }
 
     /**
      * 更新
      * @author: xieyong <qxieyongp@163.com>
      *
-     * @param array      $data 数据
+     * @param array $data 数据
      *
      * "type" => "user",
      *
@@ -280,13 +318,24 @@ class DBBase
      * You can also assign # for using SQL functions
      * "#uid" => "UUID()"
      *
-     * @param array|null $where 条件
+     * @param array $where 条件
      *
      * @return \PDOStatement
+     * @throws DBException
      */
-    public function update(array $data, $where = null)
+    public function update(array $data, $where = [])
     {
-        return $this->medoo->update($this->table, $data, $where);
+        if (empty($where)) {
+            throw new DBException('UPDATE_WITH_EMPTY_CONDITION');
+        }
+
+        try {
+            return $this->medoo->update($this->table, $data, $where);
+        } catch (\PDOException $e) {
+            $this->logger->logException($e);
+
+            throw new DBException('DB_ERROR');
+        }
     }
 
     /**
@@ -304,7 +353,13 @@ class DBBase
             throw new DBException('DELETE_PARAM_EMPTY');
         }
 
-        return $this->medoo->delete($this->table, $where);
+        try {
+            return $this->medoo->delete($this->table, $where);
+        } catch (\PDOException $e) {
+            $this->logger->logException($e);
+
+            throw new DBException('DB_ERROR');
+        }
     }
 
     /**
@@ -314,11 +369,18 @@ class DBBase
      * @param        $colums 列名
      * @param null   $where 见getOne()
      *
-     * @return bool|\PDOStatement
+     * @return \PDOStatement
+     * @throws DBException
      */
     public function replace($colums, $where = null)
     {
-        return $this->medoo->replace($this->table, $colums, $where);
+        try {
+            return $this->medoo->replace($this->table, $colums, $where);
+        } catch (\PDOException $e) {
+            $this->logger->logException($e);
+
+            throw new DBException('DB_ERROR');
+        }
     }
 
     /**
@@ -336,7 +398,13 @@ class DBBase
             throw new DBException('ISEXIST_PARAM_EMPTY');
         }
 
-        return $this->medoo->has($this->table, $where);
+        try {
+            return $this->medoo->has($this->table, $where);
+        } catch (\PDOException $e) {
+            $this->logger->logException($e);
+
+            throw new DBException('DB_ERROR');
+        }
     }
 
     /**
@@ -345,11 +413,18 @@ class DBBase
      *
      * @param null $where 见getOne()
      *
-     * @return bool|int
+     * @return int
+     * @throws DBException
      */
     public function getCount($where = null)
     {
-        return $this->medoo->count($this->table, $where);
+        try {
+            return $this->medoo->count($this->table, $where);
+        } catch (\PDOException $e) {
+            $this->logger->logException($e);
+
+            throw new DBException('DB_ERROR');
+        }
     }
 
     /**
@@ -359,11 +434,18 @@ class DBBase
      * @param string $column 列名
      * @param null   $where 见getOne
      *
-     * @return bool|int|string
+     * @return int|string
+     * @throws DBException
      */
     public function getMax(string $column, $where = null)
     {
-        return $this->medoo->max($this->table, $column, $where);
+        try {
+            return $this->medoo->max($this->table, $column, $where);
+        } catch (\PDOException $e) {
+            $this->logger->logException($e);
+
+            throw new DBException('DB_ERROR');
+        }
     }
 
     /**
@@ -373,11 +455,18 @@ class DBBase
      * @param string $column 列名
      * @param null   $where 见getOne
      *
-     * @return bool|int|string
+     * @return int|string
+     * @throws DBException
      */
     public function getMin(string $column, $where = null)
     {
-        return $this->medoo->min($this->table, $column, $where);
+        try {
+            return $this->medoo->min($this->table, $column, $where);
+        } catch (\PDOException $e) {
+            $this->logger->logException($e);
+
+            throw new DBException('DB_ERROR');
+        }
     }
 
     /**
@@ -387,45 +476,73 @@ class DBBase
      * @param string $column 列名
      * @param null   $where 见getOne
      *
-     * @return bool|int
+     * @return int
+     * @throws DBException
      */
     public function getAvg(string $column, $where = null)
     {
-        return $this->medoo->avg($this->table, $column, $where);
+        try {
+            return $this->medoo->avg($this->table, $column, $where);
+        } catch (\PDOException $e) {
+            $this->logger->logException($e);
+
+            throw new DBException('DB_ERROR');
+        }
     }
 
     /**
      * 计算某一列的和
      * @author: xieyong <qxieyongp@163.com>
      *
-     * @param string $column 列名
-     * @param null   $where 见getOne
+     * @param string     $column 列名
+     * @param null|array $where 见getOne
      *
-     * @return bool|int
+     * @return int
+     * @throws DBException
      */
     public function getSum(string $column, $where = null)
     {
-        return $this->medoo->sum($this->table, $column, $where);
+        try {
+            return $this->medoo->sum($this->table, $column, $where);
+        } catch (\PDOException $e) {
+            $this->logger->logException($e);
+
+            throw new DBException('DB_ERROR');
+        }
     }
 
     /**
      * 获取上一条执行的语句
      * @author: xieyong <qxieyongp@163.com>
      * @return mixed
+     * @throws DBException
      */
     public function getLastQuery()
     {
-        return $this->medoo->last();
+        try {
+            return $this->medoo->last();
+        } catch (\PDOException $e) {
+            $this->logger->logException($e);
+
+            throw new DBException('DB_ERROR');
+        }
     }
 
     /**
      * 获取数据库信息(Medoo)
      * @author: xieyong <qxieyongp@163.com>
      * @return array
+     * @throws DBException
      */
     public function getDbInfo()
     {
-        return $this->medoo->info();
+        try {
+            return $this->medoo->info();
+        } catch (\PDOException $e) {
+            $this->logger->logException($e);
+
+            throw new DBException('DB_ERROR');
+        }
     }
 
     /**
@@ -446,8 +563,8 @@ class DBBase
             $attr_name = "PDO::ATTR_" . $val;
             try {
                 $attr_value = $this->pdo->getAttribute(constant($attr_name)) ?? '';
-            } catch (\Exception $e) {
-                // 有异常说明数据库不支持某个属性，忽略
+            } catch (\PDOException $e) {
+                // 有异常说明数据库不支持某个属性，忽略即可
             }
             $rtv[$attr_name] = $attr_value;
         }

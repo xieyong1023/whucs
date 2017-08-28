@@ -8,6 +8,7 @@
  */
 
 use Library\Core\BaseController;
+use Library\Config\ConfigManager;
 
 class ErrorController extends BaseController
 {
@@ -28,5 +29,22 @@ class ErrorController extends BaseController
         }
         $this->disableView();
         $this->outputJson($exception->__toString(), $error_code, $exception->getMessage());
+    }
+
+    /**
+     * 显示http code和msg
+     * @author: xieyong <qxieyongp@163.com>
+     * @param int    $code code
+     */
+    public function showHttpCodeAction(int $code = 200)
+    {
+        $http_code = ConfigManager::getInstance()->getConfig('http_code')->toArray();
+
+        $params = [
+            'code' => $code,
+            'msg' => $http_code[$code],
+        ];
+
+       $this->display('showHttpCode', $params);
     }
 }

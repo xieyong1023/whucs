@@ -30,8 +30,11 @@ define('VIEW_PATH', APP_PATH . '/views');
 // 定义时区
 date_default_timezone_set("Asia/Shanghai");
 
+// 站点配置
+require_once CONFIG_PATH . '/site_config.php';
+
 // 其他宏定义
-require CONFIG_PATH . '/define.php';
+require_once CONFIG_PATH . '/define.php';
 
 // 检测php版本
 if (phpversion() < 7) {

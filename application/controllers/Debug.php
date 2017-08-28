@@ -11,6 +11,7 @@ use Library\DI\DI;
 use Library\Core\BaseController;
 use \Library\Tools\Validator\Validator;
 use \Library\Tools\Validator\ValidatorProvider;
+use Library\Tools\StringHelper;
 
 class DebugController extends BaseController
 {
@@ -33,20 +34,14 @@ class DebugController extends BaseController
 
     public function testAction()
     {
-        $this->disableView();
 
-        \Library\Tools\Session::getInstance()->set('hello', 'world');
-        var_dump($_SESSION);
-        var_dump(session_status());
-        \Library\Tools\Session::getInstance()->set('aiyo', 'oo');
-        $data = \Library\Tools\Session::getInstance()->get('hello');
-        var_dump(session_status());
-        $data = \Library\Tools\Session::getInstance()->get('aiyo');
-        var_dump($data);
 
-        \Library\Tools\Session::getInstance()->delete('hello');
-        var_dump($_SESSION);
-//        \Library\Tools\Session::getInstance()->destroy();
+//        \Library\Tools\Secure::createCSRFToken('test');
+
+//        var_dump($_SESSION);
+
+       var_dump(StringHelper::getRandomString(32));
+
     }
 
     public function test1Action()

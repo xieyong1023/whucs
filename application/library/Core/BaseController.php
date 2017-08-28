@@ -13,6 +13,8 @@ class BaseController extends \Yaf_Controller_Abstract
 {
     public function init()
     {
+        // 禁用自动渲染
+        \Yaf_Dispatcher::getInstance()->disableView();
     }
 
     /**
@@ -34,21 +36,5 @@ class BaseController extends \Yaf_Controller_Abstract
         $response = $this->getResponse();
         $response->setHeader('Content-Type', 'application/json');
         $response->setBody(\json_encode($rtv));
-    }
-
-    /**
-     * 禁用自动渲染
-     * @author: xieyong <qxieyongp@163.com>
-     */
-    protected function disableView()
-    {
-        \Yaf_Dispatcher::getInstance()->disableView();
-    }
-
-    protected function show_404()
-    {
-        $this->disableView();
-        echo $this->getViewpath();
-        echo $this->render('error404');
     }
 }

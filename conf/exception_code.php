@@ -10,9 +10,10 @@
 
 return [
     // 异常类名   =>  [开始号码, 结束号码]
-    'ConfigException'      => [100000, 101000],
-    'DIException'          => [101000, 102000],
-    'DBException'          => [102000, 103000],
-    'ServiceException'     => [103000, 104000],
-    'UserServiceException' => [104000, 105000],
+    'ConfigException'           => [100000, 101000],
+    'DIException'               => [101000, 102000],
+    'DBException'               => [102000, 103000],
+    'ServiceException'          => [103000, 104000],
+    'UserServiceException'      => [104000, 105000],
+    'AdminUserServiceException' => [105000, 106000],
 ];

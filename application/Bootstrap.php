@@ -69,6 +69,7 @@ class Bootstrap extends Yaf_Bootstrap_Abstract
             'db_connection',            // 数据库连接日志
             'database',                 // 数据库日志
             'user_service',             // 用户服务层日志
+            'admin_user_service'        // 管理员用户服务层日志
         ];
 
         $di = \Library\DI\DI::getInstance();

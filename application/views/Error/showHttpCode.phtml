@@ -1,0 +1,22 @@
+<?php
+/**
+ * 显示http状态码
+ *
+ * @author: xieyong <qxieyongp@163.com>
+ * @Date: 2017/8/28
+ * @Time: 13:29
+ */
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title><?php echo $title ?? DEFAULT_TITLE;?></title>
+    <link rel="bookmark"  type="image/x-icon"  href="<?php echo FAVICON_URL?>"/>
+    <link rel="shortcut icon" href="<?php echo FAVICON_URL?>">
+</head>
+<body>
+    <p style="width:50px;margin: 50px auto auto auto; font-size: 46px; color: black; font-weight: bold"><?php echo $code?? 404?></p>
+    <p style="width:200px;margin: 20px auto auto auto; font-size: 16px; color: black;"><?php echo $msg ?? ''; ?></p>
+</body>
+</html>

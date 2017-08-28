@@ -9,11 +9,11 @@
 
 namespace Library\Service;
 
-use Library\Core\Exception;
+use Library\Config\ConfigManager;
+use Library\Exception\DBException;
 use Library\Exception\UserServiceException;
 use Library\Mysql\UserCore;
 use Library\Tools\Encrypt;
-use Library\Tools\StringHelper;
 use Library\Core\Service;
 
 /**
@@ -26,12 +26,6 @@ class UserService extends Service
      * @var string 日志名
      */
     protected $log_name = 'user_service';
-    /**
-     * @var array 配置
-     */
-    protected $option = [
-        'salt_length' => 6, // salt长度
-    ];
 
     public function __construct(array $option = [])
     {
@@ -53,47 +47,44 @@ class UserService extends Service
     public function addUserByUsername(...$user_data)
     {
         $user_to_add = [];
-        $user_core = new UserCore();
+        try {
+            $user_core = new UserCore();
 
-        foreach ($user_data as $user) {
-            if (empty($user['username'])) {
-                throw new UserServiceException('USERNAME_NOT_SET');
+            foreach ($user_data as $user) {
+                if (empty($user['username'])) {
+                    throw new UserServiceException('USERNAME_IS_EMPTY');
+                }
+
+                if ($user_core->isUsernameExist($user['username'])) {
+                    throw new UserServiceException('USERNAME_EXISTED');
+                }
+
+                if (empty($user['password'])) {
+                    throw new UserServiceException('PASSWORD_IS_EMPTY');
+                }
+
+                $salt = $user_core->createSalt();
+                $key = ConfigManager::getInstance()->getConfig('encrypt')->item('password_key');
+                $password = Encrypt::passwordEncrypt($user['password'], $salt, $key);
+
+                $new_user = [
+                    'username'    => $user['username'],
+                    'nickname'    => $user['username'],
+                    'student_id'  => '',
+                    'password'    => $password,
+                    'salt'        => $salt,
+                ];
+
+                array_push($user_to_add, $new_user);
             }
 
-            $is_exist = [
-                'OR' => [
-                    'username' => $user['username'],
-                    'nickname' => $user['nickname'],
-                ],
-            ];
-            if ($user_core->isExist($is_exist)) {
-                throw new UserServiceException('USERNAME_EXIST');
+            if (! empty($user_to_add)) {
+                $user_core->addUser(...$user_to_add);
             }
+        } catch (DBException $e) {
+            $this->logger->logException($e);
 
-            if (empty($user['password'])) {
-                throw new UserServiceException('PASSWORD_NOT_SET');
-            }
-
-            $salt = $this->getPasswordSalt();
-            $password = Encrypt::passwordEncrypt($user['password'], $salt);
-
-            $new_user = [
-                'username'    => $user['username'],
-                'nickname'    => $user['username'],
-                'student_id'  => '',
-                'password'    => $password,
-                'salt'        => $salt,
-                'create_time' => NOW_TIME,
-                'update_time' => NOW_TIME,
-                'status'      => 0,
-                'type'        => 0,
-            ];
-
-            array_push($user_to_add, $new_user);
-        }
-
-        if (! empty($user_to_add)) {
-            $user_core->insert(...$user_to_add);
+            throw new UserServiceException('DB_ERROR');
         }
     }
 
@@ -108,48 +99,46 @@ class UserService extends Service
     public function addUserByStudentId(...$user_data)
     {
         $user_to_add = [];
-        $user_core = new UserCore();
 
-        foreach ($user_data as $user) {
-            if (empty($user['student_id'])) {
-                throw new UserServiceException('STUDENTID_NOT_SET');
+        try {
+            $user_core = new UserCore();
+
+            foreach ($user_data as $user) {
+                if (empty($user['student_id'])) {
+                    throw new UserServiceException('STUDENTID_IS_EMPTY');
+                }
+
+                if ($user_core->isStudentIdExist($user['student_id'])) {
+                    throw new UserServiceException('STUDENTID_EXISTED');
+                }
+
+                if (empty($user['password'])) {
+                    throw new UserServiceException('PASSWORD_IS_EMPTY');
+                }
+
+                $salt = $user_core->createSalt();
+                $key = ConfigManager::getInstance()->getConfig('encrypt')->item('password_key');
+                $password = Encrypt::passwordEncrypt($user['password'], $salt, $key);
+
+                $new_user = [
+                    'username'    => $user['student_id'],
+                    'nickname'    => $user['student_id'],
+                    'student_id'  => $user['student_id'],
+                    'password'    => $password,
+                    'salt'        => $salt,
+                ];
+
+                array_push($user_to_add, $new_user);
             }
 
-            $is_exist = [
-                'OR' => [
-                    'username'   => $user['student_id'],
-                    'nickname'   => $user['student_id'],
-                    'student_id' => $user['student_id'],
-                ],
-            ];
-            if ($user_core->isExist($is_exist)) {
-                throw new UserServiceException('STUDENTID_EXIST');
+            if (! empty($user_to_add)) {
+                $user_core->addUser(...$user_to_add);
+
             }
+        } catch (DBException $e) {
+            $this->logger->logException($e);
 
-            if (empty($user['password'])) {
-                throw new UserServiceException('PASSWORD_NOT_SET');
-            }
-
-            $salt = $this->getPasswordSalt();
-            $password = Encrypt::passwordEncrypt($user['password'], $salt);
-
-            $new_user = [
-                'username'    => $user['student_id'],
-                'nickname'    => $user['student_id'],
-                'student_id'  => $user['student_id'],
-                'password'    => $password,
-                'salt'        => $salt,
-                'create_time' => NOW_TIME,
-                'update_time' => NOW_TIME,
-                'status'      => 0,
-                'type'        => 0,
-            ];
-
-            array_push($user_to_add, $new_user);
-        }
-
-        if (! empty($user_to_add)) {
-            $user_core->insert(...$user_to_add);
+            throw new UserServiceException('DB_ERROR');
         }
     }
 
@@ -158,59 +147,90 @@ class UserService extends Service
      * @author: xieyong <qxieyongp@163.com>
      *
      * @param int $uid uid
-     * @param     $columns 列名 不指定则获取所有信息
      *
      * @return array|bool|mixed
      * @throws UserServiceException
      */
-    public function getUserCoreById(int $uid, $columns)
+    public function getUserCoreById(int $uid)
     {
-        $user_core = new UserCore();
-
         if ($uid < 0) {
             throw new UserServiceException('INVALID_UID');
         }
 
-        return $user_core->getOne($columns, ['id' => $uid]);
+        try {
+            $user_core = new UserCore();
+
+            return $user_core->getUserById($uid);
+        } catch (DBException $e) {
+            $this->logger->logException($e);
+
+            throw new UserServiceException('DB_ERROR');
+        }
     }
 
     /**
      * 昵称换用户信息
      * @author: xieyong <qxieyongp@163.com>
+     *
      * @param string $nickname 昵称
-     * @param        $columns 列名
+     * @param        $columns
      *
      * @return array|bool|mixed
+     * @throws UserServiceException
      */
-    public function getUserCoreByNickname(string $nickname, $columns)
+    public function getUserCoreByNickname(string $nickname, $columns = '*')
     {
-        $user_core = new UserCore();
+        if (empty($nickname)) {
+            throw new UserServiceException('NICKNAME_IS_EMPTY');
+        }
 
-        return $user_core->getOne($columns, ['nickname' => $nickname]);
+        try {
+            $user_core = new UserCore();
+
+            return $user_core->getUserByNickname($nickname, $columns);
+        } catch (DBException $e) {
+            $this->logger->logException($e);
+
+            throw new UserServiceException('DB_ERROR');
+        }
     }
 
     /**
      * 学号换用户信息
      * @author: xieyong <qxieyongp@163.com>
+     *
      * @param string $student_id 学号
-     * @param        $columns 列名
+     * @param        $columns
      *
      * @return array|bool|mixed
+     * @throws UserServiceException
      */
-    public function getUserCoreByStudentId(string $student_id, $columns)
+    public function getUserCoreByStudentId(string $student_id, $columns = '*')
     {
-        $user_core = new UserCore();
+        if (empty($student_id)) {
+            throw new UserServiceException('STUDENTID_IS_EMPTY');
+        }
 
-        return $user_core->getOne($columns, ['student_id' => $student_id]);
+        try {
+            $user_core = new UserCore();
+
+            return $user_core->getUserByStudentId($student_id, $columns);
+        } catch (DBException $e) {
+            $this->logger->logException($e);
+
+            throw new UserServiceException('DB_ERROR');
+        }
     }
 
     /**
      * 判断用户密码是否正确
      * @author: xieyong <qxieyongp@163.com>
+     *
      * @param string $student_id
      * @param string $password
      *
      * @return bool
+     * @throws UserServiceException
      */
     public function isPasswordCorrect(string $student_id, string $password)
     {
@@ -218,28 +238,18 @@ class UserService extends Service
             return false;
         }
 
-        $user_core = new UserCore();
-        $user = $user_core->getOne(['password', 'salt'], ['student_id' => $student_id]);
+        $user = $this->getUserCoreByStudentId($student_id);
 
         if (empty($user)) {
             return false;
         }
 
-        $encrypt_password = Encrypt::passwordEncrypt($password, $user['salt']);
+        $key = ConfigManager::getInstance()->getConfig('encrypt')->item('password_key');
+        $encrypt_password = Encrypt::passwordEncrypt($password, $user['salt'], $key);
         if ($encrypt_password === $user['password']) {
             return true;
         } else {
             return false;
         }
-    }
-
-    /**
-     * 获取密码加密的随机字符
-     * @author: xieyong <qxieyongp@163.com>
-     * @return string
-     */
-    protected function getPasswordSalt()
-    {
-        return StringHelper::getRandomString($this->option['salt_length']);
     }
 }

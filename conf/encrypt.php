@@ -9,5 +9,8 @@
 
 return [
     // 用户密码加密密钥
-    'password_key' => 'e66c63606d6179dd25e93ddd87d38c89',
+    'password_key' => 'XRtChJoBKt36BFsMgZGcY0fAide9kRqO',
+
+    // 管理员用户密码加密密钥
+    'admin_password_key' => 'AfVToG7i621WEuqf7mKKTcClLGqrjSdM',
 ];

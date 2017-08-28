@@ -9,6 +9,8 @@
 
 namespace Library\Tools;
 
+use Library\Config\ConfigManager;
+
 /**
  * Class Tools
  * @package Library
@@ -89,17 +91,18 @@ class Encrypt
     }
 
     /**
-     * 密码加密函数
+     * 用户密码加密函数
      * @author: xieyong <qxieyongp@163.com>
-     * @param string $password
-     * @param string $salt
+     * @param string $password 密码
+     * @param string $salt 随机串
+     * @param string $key 密钥
      * @return string
      */
-    public static function passwordEncrypt(string $password, string $salt)
+    public static function passwordEncrypt(string $password, string $salt, string $key)
     {
         $md5_pass = md5($password);
         $md5_salt = md5($salt);
 
-        return md5(substr($md5_pass, 0, 16) . substr($md5_salt, 0, 16));
+        return md5($key . substr($md5_pass, 0, 16) . substr($md5_salt, 0, 16));
     }
 }
