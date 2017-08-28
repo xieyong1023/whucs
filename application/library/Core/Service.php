@@ -20,7 +20,7 @@ class Service
      */
     protected $option = [];
     /**
-     * @var string 服务层日志名（继承类需要设置）
+     * @var string 服务层日志名（可选，继承类设置）
      */
     protected $log_name = '';
     /**
@@ -47,9 +47,8 @@ class Service
 
         $this->di = DI::getInstance();
 
-        if (empty($this->log_name)) {
-            throw new ServiceException('SERVICE_LOG_NAME_NOT_SET');
+        if (! empty($this->log_name)) {
+            $this->logger = $this->di->get($this->log_name . '_log');
         }
-        $this->logger = $this->di->get($this->log_name . '_log');
     }
 }

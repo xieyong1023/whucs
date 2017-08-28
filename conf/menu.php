@@ -12,7 +12,7 @@ use Library\Tools\UrlHelper;
 return [
     'admin_center' => [
         'name' => '个人中心',
-        'url' => UrlHelper::adminUrl('/'),
+        'url' => UrlHelper::adminUrl('/home/adminCenter'),
         'privilege' => 'admin_center',
         'child' => [
             'admin_login_info' => [
@@ -40,7 +40,7 @@ return [
 
     'system' => [
         'name' => '系统',
-        'url' => UrlHelper::adminUrl('/'),
+        'url' => UrlHelper::adminUrl('/home/system'),
         'privilege' => 'system',
         'child' => [
             'system_state' => [
@@ -82,7 +82,7 @@ return [
 
     'content' => [
         'name' => '内容',
-        'url' => UrlHelper::adminUrl('/'),
+        'url' => UrlHelper::adminUrl('/home/content'),
         'privilege' => 'content',
         'child' => [
             'category' => [
@@ -118,7 +118,7 @@ return [
 
     'user' => [
         'name' => '用户',
-        'url' => UrlHelper::adminUrl('/'),
+        'url' => UrlHelper::adminUrl('/home/user'),
         'privilege' => 'user',
         'child' => [
             'user_manage' => [

@@ -39,6 +39,16 @@ class UserCore extends DBBase
             'student_id',
             'status',
         ],
+        'user_core_all'  => [
+            'id',
+            'username',
+            'nickname',
+            'student_id',
+            'create_time',
+            'update_time',
+            'status',
+            'type',
+        ],
     ];
 
     /**
@@ -175,5 +185,26 @@ class UserCore extends DBBase
     public function createSalt()
     {
         return StringHelper::getRandomString($this->option['salt_length']);
+    }
+
+    /**
+     * 分页获取用户列表
+     * @author: xieyong <qxieyongp@163.com>
+     *
+     * @param int $offset offset
+     * @param int $limit limit
+     *
+     * @return array
+     */
+    public function getAllUserByLimit(int $offset, int $limit)
+    {
+        $where = [
+            'ORDER' => [
+                'update_time' => 'DESC',
+            ],
+            'LIMIT' => [$offset, $limit],
+        ];
+
+        return $this->getData($this->option['user_core_all'], $where);
     }
 }

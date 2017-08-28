@@ -1,3 +1,12 @@
+<?php
+/**
+ * 后台主页
+ *
+ * @author: xieyong <qxieyongp@163.com>
+ * @Date: 2017/8/28
+ * @Time: 23:54
+ */
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,59 +21,60 @@
 <body>
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo">layui 后台布局</div>
+        <div class="layui-logo">后台管理</div>
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <ul class="layui-nav layui-layout-left">
-            <li class="layui-nav-item layui-this"><a href="">控制台</a></li>
-            <li class="layui-nav-item"><a href="">商品管理</a></li>
-            <li class="layui-nav-item"><a href="">用户</a></li>
-            <li class="layui-nav-item">
-                <a href="javascript:;">其它系统</a>
-                <dl class="layui-nav-child">
-                    <dd><a href="">邮件管理</a></dd>
-                    <dd><a href="">消息管理</a></dd>
-                    <dd><a href="">授权管理</a></dd>
-                </dl>
-            </li>
+            <?php
+            if (! empty($top_category)):
+                foreach ($top_category as $val):?>
+                    <li class="layui-nav-item <?php if ($val['current'] === true) {
+                        echo 'layui-this';
+                    } ?>">
+                        <a href="<?php echo $val['url'] ?>"><?php echo $val['name'] ?></a>
+                    </li>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </ul>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="javascript:;">
                     <i class="layui-icon">&#xe612;</i>
-                    管理员
+                    <span>管理员：</span>
+                    谢勇
                 </a>
                 <dl class="layui-nav-child">
-                    <dd><a href="">基本资料</a></dd>
-                    <dd><a href="">安全设置</a></dd>
+                    <dd><a href="">个人中心</a></dd>
+                    <dd><a href="">修改密码</a></dd>
+                    <dd><a href="">退出</a></dd>
                 </dl>
             </li>
-            <li class="layui-nav-item"><a href="">退了</a></li>
+            <li class="layui-nav-item">
+                <a href="<?php echo \Library\Tools\UrlHelper::siteUrl();?>" target="_blank">浏览站点</a>
+            </li>
         </ul>
     </div>
 
     <div class="layui-side layui-bg-black">
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-                <li class="layui-nav-item layui-nav-itemed">
-                    <a class="" href="javascript:;">所有商品</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;">列表一</a></dd>
-                        <dd><a href="javascript:;">列表二</a></dd>
-                        <dd><a href="javascript:;">列表三</a></dd>
-                        <dd><a href="">超链接</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item">
-                    <a href="javascript:;">解决方案</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;">列表一</a></dd>
-                        <dd><a href="javascript:;">列表二</a></dd>
-                        <dd><a href="">超链接</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item"><a href="">云市场</a></li>
-                <li class="layui-nav-item"><a href="">发布商品</a></li>
+            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                <?php
+                if (! empty($left_category)):
+                    foreach ($left_category as $left_item): ?>
+                        <li class="layui-nav-item layui-nav-itemed">
+                            <a class="" href="<?php echo $left_item['url']; ?>"><?php echo $left_item['name']; ?></a>
+                            <?php
+                            if (! empty($left_item['child'])): ?>
+                                <dl class="layui-nav-child">
+                                    <?php foreach ($left_item['child'] as $child): ?>
+                                        <dd><a href="<?php echo $child['url']; ?>"><?php echo $child['name'] ?></a>
+                                        </dd>
+                                    <?php endforeach; ?>
+                                </dl>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </ul>
         </div>
     </div>

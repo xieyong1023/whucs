@@ -21,6 +21,6 @@ class ServiceException extends Exception
      * @var array 范围 103000 ~ 104000
      */
     protected $map = [
-        'SERVICE_LOG_NAME_NOT_SET' => ['code' => 103001, 'zh_cn' => '服务日志名未设置'],
+
     ];
 }

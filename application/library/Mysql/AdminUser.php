@@ -38,6 +38,9 @@ class AdminUser extends DBBase
             'realname',
             'group',
             'tel',
+            'create_time',
+            'update_time',
+            'status',
         ],
     ];
 
@@ -125,5 +128,38 @@ class AdminUser extends DBBase
     public function getAdminUserByUsername(string $username)
     {
         return $this->getOne($this->option['admin_user_info'], ['username' => $username]);
+    }
+
+    /**
+     * 分页获取所有管理员用户
+     * @author: xieyong <qxieyongp@163.com>
+     * @param int $offset
+     * @param     $limit
+     *
+     * @return array
+     */
+    public function getAllByLimit(int $offset, $limit)
+    {
+        $where = [
+            'ORDER' => [
+                'group' => 'ASC',
+                'update_time' => 'DESC',
+            ],
+            'LIMIT' => [$offset, $limit],
+        ];
+
+        return $this->getData($this->option['admin_user_info'], $where);
+    }
+
+    /**
+     * 根据uid删除用户
+     * @author: xieyong <qxieyongp@163.com>
+     * @param int $uid uid
+     *
+     * @return \PDOStatement
+     */
+    public function deleteAdminUserById(int $uid)
+    {
+        return $this->delete(['id' => $uid]);
     }
 }

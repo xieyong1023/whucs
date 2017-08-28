@@ -173,12 +173,11 @@ class UserService extends Service
      * @author: xieyong <qxieyongp@163.com>
      *
      * @param string $nickname 昵称
-     * @param        $columns
      *
      * @return array|bool|mixed
      * @throws UserServiceException
      */
-    public function getUserCoreByNickname(string $nickname, $columns = '*')
+    public function getUserCoreByNickname(string $nickname)
     {
         if (empty($nickname)) {
             throw new UserServiceException('NICKNAME_IS_EMPTY');
@@ -187,7 +186,7 @@ class UserService extends Service
         try {
             $user_core = new UserCore();
 
-            return $user_core->getUserByNickname($nickname, $columns);
+            return $user_core->getUserByNickname($nickname);
         } catch (DBException $e) {
             $this->logger->logException($e);
 
@@ -200,12 +199,11 @@ class UserService extends Service
      * @author: xieyong <qxieyongp@163.com>
      *
      * @param string $student_id 学号
-     * @param        $columns
      *
      * @return array|bool|mixed
      * @throws UserServiceException
      */
-    public function getUserCoreByStudentId(string $student_id, $columns = '*')
+    public function getUserCoreByStudentId(string $student_id)
     {
         if (empty($student_id)) {
             throw new UserServiceException('STUDENTID_IS_EMPTY');
@@ -214,7 +212,7 @@ class UserService extends Service
         try {
             $user_core = new UserCore();
 
-            return $user_core->getUserByStudentId($student_id, $columns);
+            return $user_core->getUserByStudentId($student_id);
         } catch (DBException $e) {
             $this->logger->logException($e);
 
