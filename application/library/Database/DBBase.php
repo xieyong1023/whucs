@@ -9,6 +9,7 @@
 
 namespace Library\Database;
 
+use Library\Core\Exception;
 use Library\DI\DI;
 use Library\Exception\DBException;
 use Library\Log\Logger;
@@ -47,6 +48,10 @@ class DBBase
      * @var Logger
      */
     protected $logger = null;
+    /**
+     * @var int 执行插入操作，同时插入的最大条目数
+     */
+    protected $max_insert_num = 1000;
 
     /**
      * DBBase constructor.
@@ -100,7 +105,7 @@ class DBBase
      *
      * @return array|bool
      */
-    public function getData($columns, $where = null)
+    public function getData($columns = '*', $where = null)
     {
         return $this->medoo->select($this->table, $columns, $where);
     }
@@ -144,7 +149,7 @@ class DBBase
      *
      * @return array|bool
      */
-    public function getDataWithJoin(array $join, $columns, $where = null)
+    public function getDataWithJoin(array $join, $columns = '*', $where = null)
     {
         return $this->medoo->select($this->table, $join, $columns, $where);
     }
@@ -204,7 +209,7 @@ class DBBase
      *
      * @return array|bool|mixed
      */
-    public function getOne($columns, $where = null)
+    public function getOne($columns = '*', $where = null)
     {
         return $this->medoo->get($this->table, $columns, $where);
     }
@@ -219,9 +224,14 @@ class DBBase
      * @param array ...$data 插入数据
      *
      * @return \PDOStatement
+     * @throws Exception
      */
     public function insert(...$data)
     {
+        if (count($data) > $this->max_insert_num) {
+            throw new DBException('INSERT_TOO_MANY_ITEMS');
+        }
+
         return $this->medoo->insert($this->table, ...$data);
     }
 
@@ -286,9 +296,14 @@ class DBBase
      * @param array $where 见getOne()
      *
      * @return \PDOStatement
+     * @throws DBException
      */
     public function delete(array $where)
     {
+        if (empty($where)) {
+            throw new DBException('DELETE_PARAM_EMPTY');
+        }
+
         return $this->medoo->delete($this->table, $where);
     }
 
@@ -313,9 +328,14 @@ class DBBase
      * @param array $where 见getOne()
      *
      * @return bool
+     * @throws DBException
      */
     public function isExist(array $where)
     {
+        if (empty($where)) {
+            throw new DBException('ISEXIST_PARAM_EMPTY');
+        }
+
         return $this->medoo->has($this->table, $where);
     }
 

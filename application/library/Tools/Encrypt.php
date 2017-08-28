@@ -87,4 +87,19 @@ class Encrypt
             return $keyc . str_replace('=', '', base64_encode($result));
         }
     }
+
+    /**
+     * 密码加密函数
+     * @author: xieyong <qxieyongp@163.com>
+     * @param string $password
+     * @param string $salt
+     * @return string
+     */
+    public static function passwordEncrypt(string $password, string $salt)
+    {
+        $md5_pass = md5($password);
+        $md5_salt = md5($salt);
+
+        return md5(substr($md5_pass, 0, 16) . substr($md5_salt, 0, 16));
+    }
 }

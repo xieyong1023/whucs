@@ -21,6 +21,9 @@ class DBException extends Exception
      * @var array 范围 102000 ~ 103000
      */
     protected $map = [
-        'DB_CONNECTION_ERROR' => ['code' => 102001, 'zh_cn' => '数据库连接错误'],
+        'DB_CONNECTION_ERROR'   => ['code' => 102001, 'zh_cn' => '数据库连接错误'],
+        'INSERT_TOO_MANY_ITEMS' => ['code' => 102002, 'zh_cn' => '同时插入的数据过多'],
+        'DELETE_PARAM_EMPTY'    => ['code' => 102003, 'zh_cn' => '删除操作传入参数为空'],
+        'ISEXIST_PARAM_EMPTY'   => ['code' => 102004, 'zh_cn' => '检查是否存在时传入参数为空'],
     ];
 }

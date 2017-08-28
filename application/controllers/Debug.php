@@ -22,7 +22,6 @@ class DebugController extends BaseController
      * @var \Library\Database\Medoo
      */
     protected $medoo = null;
-
     protected $a = [
         'a' => 123,
     ];
@@ -36,7 +35,26 @@ class DebugController extends BaseController
     {
         $this->disableView();
 
-        $this->db();
+        \Library\Tools\Session::getInstance()->set('hello', 'world');
+        var_dump($_SESSION);
+        var_dump(session_status());
+        \Library\Tools\Session::getInstance()->set('aiyo', 'oo');
+        $data = \Library\Tools\Session::getInstance()->get('hello');
+        var_dump(session_status());
+        $data = \Library\Tools\Session::getInstance()->get('aiyo');
+        var_dump($data);
+
+        \Library\Tools\Session::getInstance()->delete('hello');
+        var_dump($_SESSION);
+//        \Library\Tools\Session::getInstance()->destroy();
+    }
+
+    public function test1Action()
+    {
+        $this->disableView();
+        \Library\Tools\Session::getInstance()->destroy();
+
+        var_dump(ini_get('session.cookie_path'));
     }
 
     public function log()
@@ -49,28 +67,39 @@ class DebugController extends BaseController
 
     public function db()
     {
-        $db = new \Library\Database\DBBase();
+        $db = new \Library\Mysql\UserCore();
 
 //        $data = $this->medoo->update(
 //            'test', ['id'=>1, 'username' => 'x', 'password' => 'a'], ['id' => 1]
 //        );
 
         $user = [
-            'username' => '111xy',
-            'nickname' => '111xieyong',
-            'password' => '1234',
-            'student_id' => '123',
-            'group_id' => 0,
+            'username'    => '111xy',
+            'nickname'    => '111xieyong',
+            'password'    => '1234',
+            'student_id'  => '123',
+            'group_id'    => 0,
             'create_time' => NOW_TIME,
             'update_time' => NOW_TIME,
-            'status' => 0,
+            'status'      => 0,
         ];
-//        try{
-            $data = $db->replace('user_core',['username' => '3333'], ['username' => '1111']);
-//        } catch (\Exception $e) {
-//            echo 'aa';
-//        }
 
+//        $data = $db->insert($user);
+        $data = $db->getAttribute();
         var_dump($data);
+    }
+
+    public function randString()
+    {
+        var_dump(\Library\Tools\StringHelper::getRandomString(10));
+    }
+
+    public function cookie()
+    {
+
+//        $cookie->setCookie('test', '123456');
+//        $cookie->setCookie('test', 'qwer');
+//        $cookie->deleteCookie('test');
+
     }
 }

@@ -64,10 +64,11 @@ class Bootstrap extends Yaf_Bootstrap_Abstract
     public function _init_logger()
     {
         $log_names = [
-            'debug',             // debug
-            'error',             // 错误日志
-            'db_connection',     // 数据库连接日志
-            'database',          // 数据库日志
+            'debug',                    // debug
+            'error',                    // 错误日志
+            'db_connection',            // 数据库连接日志
+            'database',                 // 数据库日志
+            'user_service',             // 用户服务层日志
         ];
 
         $di = \Library\DI\DI::getInstance();
